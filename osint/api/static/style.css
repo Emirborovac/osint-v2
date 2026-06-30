@@ -1,6 +1,233 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: #ffffff;
+/* =========================================================================
+   OSINT V2 — app shell.
+   Black text on white. Structural lines & frames in Matrix green.
+   Frosted-glass sidebar (collapsible). No background image.
+
+   ACCENT COLOR: every border / divider / active state uses --rule.
+   Adjust the one value below to retune the whole UI.
+   ========================================================================= */
+
+:root {
+  --font: "Courier New", "Courier", "Lucida Console", monospace;
+
+  --black: #000000;
+  --white: #ffffff;
+  --rule: #008f11;   /* Matrix green — strong structural lines & frames */
+  --line: #c9ecc9;   /* faint green hairline */
+  --muted: #6b6b6b;  /* secondary text gray */
+
+  --gap: 24px;
+  --maxw: 1080px;
+  --sb-w: 240px;
+  --sb-w-collapsed: 60px;
 }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+
+html, body {
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Layout: glass sidebar (fixed overlay) + content --------------- */
+.layout { min-height: 100vh; }
+.content {
+  margin-left: var(--sb-w);
+  min-width: 0;
+  transition: margin-left 0.18s ease;
+  background: var(--white);   /* no background image */
+  min-height: 100vh;
+}
+.layout.collapsed .content { margin-left: var(--sb-w-collapsed); }
+
+/* A soft green glow that lives ONLY behind the sidebar, so the frosted
+   glass has something to refract. The content area stays pure white. */
+.glass-bg {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: var(--sb-w);
+  height: 100vh;
+  z-index: 10;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 30% at 32% 14%, rgba(0, 143, 17, 0.42), rgba(0, 143, 17, 0) 70%),
+    radial-gradient(64% 34% at 20% 82%, rgba(0, 143, 17, 0.30), rgba(0, 143, 17, 0) 72%),
+    radial-gradient(52% 26% at 82% 48%, rgba(0, 143, 17, 0.20), rgba(0, 143, 17, 0) 70%);
+  transition: width 0.18s ease;
+}
+.layout.collapsed .glass-bg { width: var(--sb-w-collapsed); }
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 56px 24px 96px;
+}
+
+/* ---- Sidebar -------------------------------------------------------- */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  width: var(--sb-w);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.34);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border-right: 1px solid var(--rule);
+  box-shadow:
+    2px 0 38px rgba(0, 143, 17, 0.16),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.75),
+    inset -1px 0 0 rgba(255, 255, 255, 0.4);
+  transition: width 0.18s ease;
+}
+.layout.collapsed .sidebar { width: var(--sb-w-collapsed); }
+
+.side-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 16px 22px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  min-height: 30px;
+}
+.layout.collapsed .side-top { justify-content: center; padding: 0 0 22px; }
+
+.brand {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-weight: bold;
+}
+.layout.collapsed .brand { display: none; }
+
+.toggle {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--rule);
+  background: var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.toggle .chev {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: var(--black);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.18s ease;
+}
+.layout.collapsed .toggle .chev { transform: rotate(180deg); }
+
+/* ---- Nav ------------------------------------------------------------ */
+.nav { display: flex; flex-direction: column; gap: 2px; padding: 0 10px; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 12px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.nav-item .ico {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-item .ico svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.nav-item:hover { color: var(--black); }
+.nav-item:hover:not(.active) {
+  background: rgba(0, 143, 17, 0.10);
+  border-radius: 999px;
+}
+/* Active tab = a liquid-glass lens: mostly clear, the backdrop filter
+   bends + brightens what's behind it, sharp specular rim highlights. */
+.nav-item.active {
+  color: var(--black);
+  font-weight: bold;
+  border-radius: 999px;
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.04) 48%,
+    rgba(255, 255, 255, 0.22)
+  );
+  -webkit-backdrop-filter: blur(5px) brightness(1.15) saturate(1.8);
+  backdrop-filter: blur(5px) brightness(1.15) saturate(1.8);
+  box-shadow:
+    0 6px 16px rgba(0, 143, 17, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.layout.collapsed .nav { padding: 0 8px; }
+.layout.collapsed .nav-item { justify-content: center; gap: 0; padding: 11px 0; }
+.layout.collapsed .lbl { display: none; }
+
+/* ---- Header --------------------------------------------------------- */
+.top {
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 28px;
+  margin-bottom: 40px;
+}
+.title {
+  font-size: 26px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.subtitle {
+  margin-top: 12px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- Placeholder (views not built yet) ----------------------------- */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--line);
+  padding: 90px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+.ph-mark { font-size: 40px; color: var(--rule); margin-bottom: 14px; }
+.ph-text { text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }

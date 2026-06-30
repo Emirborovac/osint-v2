@@ -1,11 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OSINT V2</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
+  <div class="layout" id="layout">
+    <div class="glass-bg" aria-hidden="true"></div>
+
+    <!-- Sidebar (frosted glass) -->
+    <aside class="sidebar">
+      <div class="side-top">
+        <div class="brand">OSINT&nbsp;V2</div>
+        <button class="toggle" id="toggle" aria-label="Collapse sidebar" aria-expanded="true">
+          <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 L5 8 L10 13" /></svg>
+        </button>
+      </div>
+
+      <nav class="nav" id="nav">
+        <a href="#search" class="nav-item active" data-view="search">
+          <span class="ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <span class="lbl">Search</span>
+        </a>
+        <a href="#sources" class="nav-item" data-view="sources">
+          <span class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></span>
+          <span class="lbl">Supported Sources</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+      <div class="wrap">
+        <header class="top">
+          <div class="title" id="page-title">SEARCH</div>
+          <div class="subtitle" id="subtitle">&nbsp;</div>
+        </header>
+
+        <!-- SEARCH -->
+        <section id="view-search" class="view">
+          <div class="placeholder">
+            <div class="ph-mark">+</div>
+            <div class="ph-text">Search &mdash; coming soon</div>
+          </div>
+        </section>
+
+        <!-- SUPPORTED SOURCES -->
+        <section id="view-sources" class="view" hidden>
+          <div class="placeholder">
+            <div class="ph-mark">+</div>
+            <div class="ph-text">Supported sources &mdash; coming soon</div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+  </div>
+
+  <script src="/static/app.js"></script>
 </body>
 </html>
