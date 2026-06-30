@@ -9,6 +9,6 @@ class SearchEngine(ABC):
     enabled: bool = True
 
     @abstractmethod
-    def search(self, query: str, pages: int = 1):
+    async def search(self, query: str, pages: int = 1):
         """Return a list of {"url", "title", "snippet"} result dicts."""
         raise NotImplementedError

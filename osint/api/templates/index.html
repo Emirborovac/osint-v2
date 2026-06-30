@@ -41,10 +41,23 @@
 
         <!-- SEARCH -->
         <section id="view-search" class="view">
-          <div class="placeholder">
-            <div class="ph-mark">+</div>
-            <div class="ph-text">Search &mdash; coming soon</div>
+          <form class="search-box" id="search-form" autocomplete="off">
+            <input id="q" class="search-input" type="text"
+                   placeholder="Type a name, email, username, domain &mdash; anything" />
+            <button type="submit" id="search-btn" class="btn-search">Search</button>
+          </form>
+
+          <div id="search-progress" class="progress" hidden>
+            <div class="scanline"></div>
+            <div class="progress-msg">
+              <span class="prompt">&gt;</span>
+              <span id="progress-text">Fetching Google Results &mdash; Harvesting Related Links</span>
+              <span class="dots"><span>.</span><span>.</span><span>.</span></span>
+              <span class="caret"></span>
+            </div>
           </div>
+
+          <div id="search-results" class="results" hidden></div>
         </section>
 
         <!-- SUPPORTED SOURCES -->
