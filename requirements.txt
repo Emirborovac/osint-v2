@@ -1,0 +1,14 @@
+# core
+crawl4ai
+playwright
+requests
+beautifulsoup4
+networkx
+pydantic
+python-dotenv
+phonenumbers
+
+# web
+flask
+
+# TODO: pin versions before release

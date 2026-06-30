@@ -1,0 +1,11 @@
+"""brave search-engine scraper (discovery layer). Tier: free. TODO."""
+
+from .base import SearchEngine
+
+
+class BraveEngine(SearchEngine):
+    name = "brave"
+    tier = "free"
+
+    def search(self, query, pages=1):
+        raise NotImplementedError  # TODO
