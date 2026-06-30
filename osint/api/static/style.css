@@ -232,31 +232,41 @@ html, body {
 .ph-mark { font-size: 40px; color: var(--rule); margin-bottom: 14px; }
 .ph-text { text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }
 
-/* ---- Search box ----------------------------------------------------- */
-.search-box {
-  max-width: 640px;
-  margin: 0 auto 28px;
+/* ---- Search bar (pill, integrated icon + button) ------------------- */
+.search-box { max-width: 680px; margin: 0 auto 30px; }
+.search-bar {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 6px 6px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 18px rgba(0, 143, 17, 0.06);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
+.search-bar:focus-within {
+  border-color: var(--rule);
+  box-shadow: 0 0 0 1px var(--rule), 0 0 24px rgba(0, 143, 17, 0.18);
+}
+.search-bar .s-ico { flex: 0 0 18px; width: 18px; height: 18px; color: var(--rule); }
 .search-input {
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: transparent;
   font-family: var(--font);
   font-size: 15px;
   color: var(--black);
-  background: var(--white);
-  border: 1px solid var(--rule);
-  padding: 14px 16px;
   letter-spacing: 1px;
+  padding: 12px 0;
 }
 .search-input::placeholder { color: var(--muted); }
-.search-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 1px var(--rule) inset, 0 0 16px rgba(0, 143, 17, 0.25);
-}
+.search-input:focus { outline: none; }
 .btn-search {
-  align-self: flex-start;
+  flex: 0 0 auto;
   font-family: var(--font);
   font-size: 12px;
   letter-spacing: 2px;
@@ -264,21 +274,24 @@ html, body {
   font-weight: bold;
   color: var(--white);
   background: var(--rule);
-  border: 1px solid var(--rule);
-  padding: 12px 28px;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 26px;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
-.btn-search:hover { background: var(--black); border-color: var(--black); }
+.btn-search:hover { background: var(--black); }
 .btn-search:disabled { opacity: 0.5; cursor: default; }
 
 /* ---- Progress (futuristic terminal scan) --------------------------- */
 .progress {
   position: relative;
-  max-width: 640px;
+  max-width: 680px;
   margin: 0 auto 28px;
-  border: 1px solid var(--rule);
+  border: 1px solid rgba(0, 143, 17, 0.4);
+  border-radius: 14px;
   background: rgba(0, 143, 17, 0.03);
-  padding: 22px 18px;
+  padding: 22px 20px;
   overflow: hidden;
   animation: prog-glow 1.6s ease-in-out infinite;
 }
@@ -332,11 +345,16 @@ html, body {
 }
 .result {
   border: 1px solid var(--line);
-  border-left: 2px solid var(--rule);
-  padding: 12px 14px;
+  border-left: 3px solid var(--rule);
+  border-radius: 10px;
+  padding: 13px 16px;
   margin-bottom: 10px;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
 }
-.result:hover { background: rgba(0, 143, 17, 0.04); }
+.result:hover {
+  background: rgba(0, 143, 17, 0.05);
+  box-shadow: 0 2px 14px rgba(0, 143, 17, 0.08);
+}
 .r-title { font-size: 14px; font-weight: bold; word-break: break-word; }
 .r-idx { color: var(--rule); font-weight: bold; margin-right: 8px; }
 .r-url {

@@ -68,7 +68,8 @@ function renderResults(data) {
   const box = el("search-results");
   const links = data.links || [];
   if (!links.length) {
-    box.innerHTML = `<div class="results-empty">No links found.</div>`;
+    const note = data.note ? escapeHtml(data.note) : "No links found.";
+    box.innerHTML = `<div class="results-empty">${note}</div>`;
   } else {
     box.innerHTML =
       `<div class="results-head">${links.length} links harvested for &ldquo;${escapeHtml(data.query)}&rdquo;</div>` +

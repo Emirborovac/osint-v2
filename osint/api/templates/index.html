@@ -42,9 +42,15 @@
         <!-- SEARCH -->
         <section id="view-search" class="view">
           <form class="search-box" id="search-form" autocomplete="off">
-            <input id="q" class="search-input" type="text"
-                   placeholder="Type a name, email, username, domain &mdash; anything" />
-            <button type="submit" id="search-btn" class="btn-search">Search</button>
+            <div class="search-bar">
+              <svg class="s-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>
+              </svg>
+              <input id="q" class="search-input" type="text"
+                     placeholder="Search a name, email, username, domain&hellip;" />
+              <button type="submit" id="search-btn" class="btn-search">Search</button>
+            </div>
           </form>
 
           <div id="search-progress" class="progress" hidden>
