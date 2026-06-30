@@ -10,12 +10,12 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open http://localhost:8000
+Open http://localhost:9000
 
 ## Config (optional, via env)
 
 | Var | Default | Meaning |
 |---|---|---|
 | `HOST` | `0.0.0.0` | bind address |
-| `PORT` | `8000` | port |
+| `PORT` | `9000` | port |
 | `RELOAD` | `1` | auto-reload on code change (set `0` in production) |
