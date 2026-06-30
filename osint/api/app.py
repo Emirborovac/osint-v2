@@ -3,10 +3,8 @@
 Starter: serves a single blank page. UI and the run/report endpoints
 (start a run, stream progress via SSE, fetch the report) get layered on later.
 
-Run:
-    uvicorn osint.api.app:app --reload
-    # or
-    python -m osint.api.app
+Run from the project root:
+    python app.py
 """
 
 from pathlib import Path
@@ -31,9 +29,3 @@ async def index(request: Request):
 @app.get("/health")
 async def health():
     return {"status": "ok"}
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run("osint.api.app:app", host="127.0.0.1", port=8000, reload=True)
