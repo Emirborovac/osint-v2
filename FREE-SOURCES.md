@@ -1,19 +1,20 @@
-# OSINT V2 — Source Catalog
+# OSINT V2 — Free Source Catalog
 
-The complete list of sources the engine collects from. This is the product scope,
-not an MVP subset.
+Sources usable at **zero cost** — fully free, or freemium with a usable free
+tier / free API key. **This is where we start.** Payment-required sources live in
+[PAID-SOURCES.md](PAID-SOURCES.md).
 
 **Two collection modes:**
 - **Discovery + deep crawl** (source-agnostic) — scrapes search engines, then crawls
   *any* page they surface. Covers all general/unstructured web content with no
   per-site code.
 - **Targeted collectors** (below) — reach structured data and deep-web sources that
-  general search can't: registries, DNS, breach DBs, archives, specialized indexes.
+  general search can't.
 
 **Legend**
 - **Method:** `scrape` (HTML) · `crawl` (browser/crawl4ai) · `api` (JSON) · `cli` (local tool) · `socket` · `dataset` (bulk)
-- **Auth:** none · free key · paid key · token · login · phone
-- **Cost:** free · freemium · paid
+- **Auth:** none · free key · token · login · phone
+- **Cost:** `free` · `freemium` (free tier now, pay only to scale later)
 - **Anti-bot:** low / med / high / — (n/a for APIs)
 
 ---
@@ -56,9 +57,8 @@ not an MVP subset.
 | Holehe | account existence ~120 sites | cli | none | free | — |
 | EmailRep.io | reputation, linked profiles | api | free key | free | — |
 | Epieos | Google account, linked services | scrape/api | none | freemium | med |
-| Hunter.io | verification, domain pattern | api | paid key | freemium | — |
+| Hunter.io | verification, domain pattern | api | free key | freemium | — |
 | Gravatar | profile, avatar, linked accounts | api | none | free | — |
-| Have I Been Pwned | breaches for email | api | paid key | paid (cheap) | — |
 
 ## 5. Phone intelligence
 
@@ -73,11 +73,9 @@ not an MVP subset.
 
 | Source | Yields | Method | Auth | Cost | Anti-bot |
 |---|---|---|---|---|---|
-| Have I Been Pwned | breach list | api | paid key | paid (cheap) | — |
-| Intelligence X (IntelX) | leaks, pastes, dark-web index | api | free/paid key | freemium | — |
-| DeHashed | breach records (creds, PII) | api | paid key | paid | — |
-| LeakCheck | breach records | api | paid key | paid | — |
-| Snusbase | breach records | api | paid key | paid | — |
+| Intelligence X (IntelX) | leaks, pastes, dark-web index | api | free key | freemium | — |
+
+> Most breach DBs are paid — see [PAID-SOURCES.md](PAID-SOURCES.md). Free coverage comes from IntelX's free tier + paste sites below.
 
 ## 7. Paste sites
 
@@ -91,7 +89,7 @@ not an MVP subset.
 
 | Source | Yields | Method | Auth | Cost | Anti-bot |
 |---|---|---|---|---|---|
-| Shodan | exposed hosts, services, banners | api | paid key | freemium | — |
+| Shodan | exposed hosts, services, banners | api | free key | freemium | — |
 | Censys | hosts, certs, services | api | free key | freemium | — |
 | urlscan.io | URL scans, screenshots, related domains | api | free key | free | — |
 | SecurityTrails | passive DNS, subdomain history | api | free key | freemium | — |
@@ -103,7 +101,7 @@ not an MVP subset.
 | AbuseIPDB | IP reputation | api | free key | free | — |
 | BuiltWith / Wappalyzer | tech stack | scrape/api | optional | freemium | low |
 | PublicWWW | source-code / tracker-ID search | scrape/api | optional | freemium | med |
-| GreyNoise / Onyphe / BinaryEdge / FOFA / ZoomEye | host & exposure intel | api | key | freemium | — |
+| GreyNoise / Onyphe / BinaryEdge / FOFA / ZoomEye | host & exposure intel | api | free key | freemium | — |
 
 ## 9. Certificates
 
@@ -134,7 +132,6 @@ not an MVP subset.
 | SEC EDGAR | US filings, execs, insiders (full-text) | api | none | free | — |
 | GLEIF (LEI) | legal entity identifiers | api | none | free | — |
 | EU Business Registers (BRIS) | EU company data | scrape | none | free | med |
-| Crunchbase | startups, funding, people | api | paid key | paid | — |
 
 ## 12. Court / legal / public records
 
@@ -202,12 +199,11 @@ not an MVP subset.
 |---|---|---|---|---|---|
 | Yandex Images | reverse image match (best) | crawl | none | free | high |
 | Google Images / Lens | reverse image match | crawl | none | free | high |
-| Bing Visual Search | reverse image match | api/scrape | key | freemium | — |
-| TinEye | reverse image match | api/scrape | key | freemium | low |
-| FaceCheck.id | face search across web | scrape/api | key | paid | med |
+| Bing Visual Search | reverse image match | api/scrape | free key | freemium | — |
+| TinEye | reverse image match | api/scrape | free key | freemium | low |
 | EXIF extraction | camera, GPS, timestamps from images | local lib | none | free | — |
 
-> Face-search tools (FaceCheck, PimEyes) carry legal/ethics constraints — gate behind explicit authorization.
+> Dedicated face-search engines are paid — see [PAID-SOURCES.md](PAID-SOURCES.md). Free face/image work is done via Yandex/Google reverse image + EXIF.
 
 ## 18. Geolocation / maps
 
@@ -216,7 +212,7 @@ not an MVP subset.
 | Google Maps / reviews / Street View | places, reviewer identities | scrape/api | optional | freemium | high |
 | OpenStreetMap / Nominatim | geocoding, place data | api | none | free | — |
 | Wikimapia | annotated places | scrape | none | free | low |
-| Foursquare / Swarm | places, check-ins | api | key | freemium | — |
+| Foursquare / Swarm | places, check-ins | api | free key | freemium | — |
 
 ## 19. Crypto / blockchain
 
@@ -227,9 +223,9 @@ not an MVP subset.
 | Blockchair | multi-chain explorer | api | optional key | freemium | — |
 | Arkham | wallet → entity tagging | scrape/api | optional | freemium | med |
 | Wallet Explorer | wallet clustering | scrape | none | free | low |
-| OpenSea | NFT holdings → wallets | api | key | free | — |
+| OpenSea | NFT holdings → wallets | api | free key | free | — |
 
-## 20. People-search aggregators (US-centric)
+## 20. People-search aggregators (US-centric, free tier)
 
 | Source | Yields | Method | Auth | Cost | Anti-bot |
 |---|---|---|---|---|---|
@@ -237,7 +233,8 @@ not an MVP subset.
 | FastPeopleSearch | name, address, phone, relatives | scrape | none | free | high |
 | ThatsThem | reverse phone/email/address | scrape/api | optional | freemium | high |
 | Radaris / PeekYou | aggregated profiles | scrape | none | freemium | high |
-| Spokeo / BeenVerified / Whitepages | aggregated profiles (paywalled) | scrape | login | paid | high |
+
+> Paywalled aggregators (Spokeo, BeenVerified, Whitepages) are in [PAID-SOURCES.md](PAID-SOURCES.md).
 
 ## 21. Identity linking / bio aggregators
 
@@ -279,7 +276,7 @@ not an MVP subset.
 |---|---|
 | W1 — Spine | 1 Search · 2 Archives · deep-crawl core |
 | W2 — Identity | 3 Username · 4 Email · 5 Phone · 21 Identity linking |
-| W3 — Infra | 8 Network/DNS · 9 Certificates · 6 Breach · 7 Pastes |
+| W3 — Infra | 8 Network/DNS · 9 Certificates · 6 Breach (IntelX) · 7 Pastes |
 | W4 — Records | 10 Sanctions · 11 Corporate · 12 Court/legal |
 | W5 — Footprint | 13 Social · 14 Code · 15 News · 16 Academic |
-| W6 — Specialized | 17 Images/face · 18 Geo · 19 Crypto · 20 People-search |
+| W6 — Specialized | 17 Images · 18 Geo · 19 Crypto · 20 People-search |
