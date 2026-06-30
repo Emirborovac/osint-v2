@@ -9,6 +9,8 @@ python-dotenv
 phonenumbers
 
 # web
-flask
+fastapi
+uvicorn
+jinja2
 
 # TODO: pin versions before release

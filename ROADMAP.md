@@ -73,7 +73,7 @@ See [FREE-SOURCES.md](FREE-SOURCES.md) and [PAID-SOURCES.md](PAID-SOURCES.md) fo
 | # | Component | What it does | Type | Status |
 |---|---|---|---|---|
 | 0.1 | Repo scaffold & config | Package layout, `.env`, settings, tier toggles | core | ☑ |
-| 0.2 | Dependency setup | crawl4ai + Playwright, requests, flask, networkx, pydantic | core | ☐ |
+| 0.2 | Dependency setup | crawl4ai + Playwright, requests, fastapi, networkx, pydantic | core | ◐ |
 | 0.3 | Entity model | Typed entities (PERSON, EMAIL, USERNAME, PHONE, DOMAIN, ORG, URL, DOCUMENT…) | core | ☐ |
 | 0.4 | Graph store | Nodes + relationships + confidence | core | ☐ |
 | 0.5 | Content/result store | Cache + dedupe of scraped pages | core | ☐ |
@@ -127,7 +127,7 @@ See [FREE-SOURCES.md](FREE-SOURCES.md) and [PAID-SOURCES.md](PAID-SOURCES.md) fo
 | # | Component | What it does | Type | Status |
 |---|---|---|---|---|
 | 6.1 | Pipeline runner | search → crawl → enrich → aggregate → report | core | ☐ |
-| 6.2 | Flask API + streaming | start run, stream progress (SSE), fetch report | core | ☐ |
+| 6.2 | FastAPI + streaming | start run, stream progress (SSE), fetch report | core | ◐ |
 | 6.3 | Async job queue | background runs, concurrency control | core | ☐ |
 | 6.4 | Frontend | investigation UI + graph view | core | ☐ |
 
