@@ -18,4 +18,4 @@ Open http://localhost:9000
 |---|---|---|
 | `HOST` | `0.0.0.0` | bind address |
 | `PORT` | `9000` | port |
-| `RELOAD` | `1` | auto-reload on code change (set `0` in production) |
+| `RELOAD` | `0` | auto-reload on code change (unreliable on mapped drives; restart manually) |
