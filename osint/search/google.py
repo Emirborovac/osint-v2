@@ -1,15 +1,22 @@
-"""Google search-engine scraper (discovery layer). Tier: free.
+"""Google search-engine source (discovery layer).
 
-Scrapes the first N pages of Google results with crawl4ai (headless
-Chromium) and extracts organic result links. No SERP API. CAPTCHA
-handling and proxy rotation are intentionally not implemented yet.
+Two paths, chosen automatically:
 
-Every page fetch is logged. Failures are logged, never swallowed silently.
+1. **Custom Search JSON API** (preferred) — used when GOOGLE_API_KEY and
+   GOOGLE_CSE_ID are set. Official, reliable, structured, no CAPTCHA/proxy.
+   Free 100 queries/day, then paid; max 10 results/page, 100 results/query.
+2. **Scraper fallback** — headless Chromium via crawl4ai when no API creds are
+   configured. Free, real google.com results, but fragile (CAPTCHA/rate limits).
+   No CAPTCHA handling or proxies yet.
+
+Every page/request is logged. Failures are logged, never swallowed silently.
 """
 
 import logging
+import os
 import urllib.parse
 
+import httpx
 from bs4 import BeautifulSoup
 
 from .base import SearchEngine
@@ -22,15 +29,14 @@ except ImportError:  # crawl4ai is optional until installed
 log = logging.getLogger("osint.search.google")
 
 RESULTS_PER_PAGE = 10
+_CSE_ENDPOINT = "https://www.googleapis.com/customsearch/v1"
+_CSE_MAX_START = 91  # API allows start up to 91 (100 results max per query)
+
 _UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 )
-# Skips the EU consent interstitial that would otherwise hide all results.
 _CONSENT_COOKIE = {"name": "CONSENT", "value": "YES+1", "domain": ".google.com", "path": "/"}
-# Markers of a genuine block / CAPTCHA page. Only consulted when 0 links were
-# parsed — these phrases must be specific enough not to appear on real results
-# pages (e.g. "/sorry/" and "consent.google.com" do appear on normal pages).
 _BLOCK_MARKERS = (
     "our systems have detected unusual traffic",
     "g-recaptcha",
@@ -42,13 +48,62 @@ _BLOCK_MARKERS = (
 
 class GoogleEngine(SearchEngine):
     name = "google"
-    tier = "free"
+    tier = "freemium"  # API tier is free up to 100/day; scraper path is free
 
+    def __init__(self):
+        self.api_key = os.environ.get("GOOGLE_API_KEY") or ""
+        self.cse_id = os.environ.get("GOOGLE_CSE_ID") or ""
+        self.last_blocked = 0
+
+    async def search(self, query, pages=5):
+        if self.api_key and self.cse_id:
+            return await self._search_api(query, pages)
+        log.info("No GOOGLE_API_KEY/GOOGLE_CSE_ID set — using scraper fallback")
+        return await self._search_scrape(query, pages)
+
+    # ---- Custom Search JSON API (preferred) --------------------------------
+    async def _search_api(self, query, pages):
+        out, seen = [], set()
+        log.info("Google CSE API START: query=%r pages=%d", query, pages)
+        async with httpx.AsyncClient(timeout=15) as client:
+            for p in range(pages):
+                start = p * RESULTS_PER_PAGE + 1
+                if start > _CSE_MAX_START:
+                    log.info("CSE reached 100-result cap; stopping")
+                    break
+                params = {"key": self.api_key, "cx": self.cse_id, "q": query,
+                          "start": start, "num": RESULTS_PER_PAGE}
+                try:
+                    r = await client.get(_CSE_ENDPOINT, params=params)
+                except Exception:
+                    log.exception("CSE page %d request raised", p + 1)
+                    continue
+                if r.status_code != 200:
+                    log.warning("CSE page %d HTTP %s: %s", p + 1, r.status_code, r.text[:180])
+                    if r.status_code in (403, 429):  # quota / key problem — no point continuing
+                        break
+                    continue
+                items = r.json().get("items") or []
+                new = 0
+                for it in items:
+                    url = it.get("link")
+                    if url and url not in seen:
+                        seen.add(url)
+                        out.append({"url": url, "title": it.get("title", ""),
+                                    "snippet": it.get("snippet", "")})
+                        new += 1
+                log.info("CSE page %d OK: items=%d, +%d new (total %d)", p + 1, len(items), new, len(out))
+                if len(items) < RESULTS_PER_PAGE:  # no more results
+                    break
+        log.info("Google CSE API DONE: query=%r total=%d", query, len(out))
+        return out
+
+    # ---- Scraper fallback --------------------------------------------------
     def _page_url(self, query, start):
         params = {"q": query, "start": start, "hl": "en", "gl": "us"}
         return "https://www.google.com/search?" + urllib.parse.urlencode(params)
 
-    async def search(self, query, pages=5):
+    async def _search_scrape(self, query, pages):
         if AsyncWebCrawler is None:
             raise RuntimeError("crawl4ai is not installed")
 
@@ -56,7 +111,7 @@ class GoogleEngine(SearchEngine):
         run = CrawlerRunConfig(cache_mode=CacheMode.BYPASS, page_timeout=25000)
 
         seen, out, blocked = set(), [], 0
-        log.info("Google harvest START: query=%r pages=%d", query, pages)
+        log.info("Google SCRAPE START: query=%r pages=%d", query, pages)
         async with AsyncWebCrawler(config=browser) as crawler:
             for p in range(pages):
                 url = self._page_url(query, p * RESULTS_PER_PAGE)
@@ -70,13 +125,10 @@ class GoogleEngine(SearchEngine):
                 html = getattr(res, "html", "") or ""
                 ok = getattr(res, "success", False)
                 status = getattr(res, "status_code", None)
-
                 if not ok:
                     log.warning("page %d NOT ok (status=%s, html=%d bytes)", p + 1, status, len(html))
                     continue
 
-                # Parse first. Only treat 0-result pages as "blocked" if a genuine
-                # CAPTCHA marker is present — avoids discarding real result pages.
                 page_links = self._parse(html)
                 if not page_links:
                     if self._looks_blocked(html):
@@ -86,10 +138,7 @@ class GoogleEngine(SearchEngine):
                             p + 1, status, len(html),
                         )
                     else:
-                        log.info(
-                            "page %d: 0 results parsed (status=%s, html=%d bytes) — no more results",
-                            p + 1, status, len(html),
-                        )
+                        log.info("page %d: 0 results parsed (status=%s, html=%d bytes)", p + 1, status, len(html))
                     continue
 
                 new = 0
@@ -98,13 +147,11 @@ class GoogleEngine(SearchEngine):
                         seen.add(link["url"])
                         out.append(link)
                         new += 1
-                log.info(
-                    "page %d OK: status=%s html=%d bytes, parsed=%d, +%d new (total %d)",
-                    p + 1, status, len(html), len(page_links), new, len(out),
-                )
+                log.info("page %d OK: status=%s html=%d bytes, parsed=%d, +%d new (total %d)",
+                         p + 1, status, len(html), len(page_links), new, len(out))
 
-        log.info("Google harvest DONE: query=%r total=%d (blocked pages=%d)", query, len(out), blocked)
         self.last_blocked = blocked
+        log.info("Google SCRAPE DONE: query=%r total=%d (blocked pages=%d)", query, len(out), blocked)
         return out
 
     def _parse(self, html):
